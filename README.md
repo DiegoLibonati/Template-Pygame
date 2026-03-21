@@ -65,9 +65,6 @@ pyinstaller==6.16.0
 
 [`https://www.diegolibonati.com.ar/#/project/Template-Pygame`](https://www.diegolibonati.com.ar/#/project/Template-Pygame)
 
-## Video
-
-https://user-images.githubusercontent.com/99032604/201543320-020d09af-9266-4a0b-8fff-dbaf4083f587.mp4
 
 ## Testing
 
