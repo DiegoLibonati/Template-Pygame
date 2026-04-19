@@ -9,4 +9,4 @@ class DefaultConfig:
         self.TESTING = False
 
         # App
-        self.ENV_NAME = os.getenv("ENV_NAME", "pygame-boilerplate")
+        self.ENV_NAME = os.getenv("ENV_NAME", "python-pygame-boilerplate")

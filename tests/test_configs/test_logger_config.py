@@ -15,7 +15,7 @@ class TestSetupLogger:
     @pytest.mark.unit
     def test_default_name(self) -> None:
         logger: logging.Logger = setup_logger()
-        assert logger.name == "pygame-boilerplate"
+        assert logger.name == "python-pygame-boilerplate"
 
     @pytest.mark.unit
     def test_custom_name(self) -> None:

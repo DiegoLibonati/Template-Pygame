@@ -1,4 +1,4 @@
-# PygameBoilerplate
+# PythonPygameBoilerplate
 
 ## Educational Purpose
 
@@ -24,7 +24,7 @@ The main goal is to explore and demonstrate best practices, patterns, and techno
 
 ## Description
 
-**PygameBoilerplate** is a starting point for building games with Pygame.
+**PythonPygameBoilerplate** is a starting point for building games with Pygame.
 
 Solves the problem of repeating the same setup and architecture decisions every time a new game project is started: environment config, logging, asset path resolution, build pipeline, and test infrastructure are already in place.
 
@@ -83,7 +83,7 @@ pyinstaller==6.16.0
 
 ## Portfolio link
 
-[`https://www.diegolibonati.com.ar/#/project/pygame-boilerplate`](https://www.diegolibonati.com.ar/#/project/pygame-boilerplate)
+[`https://www.diegolibonati.com.ar/#/project/python-pygame-boilerplate`](https://www.diegolibonati.com.ar/#/project/python-pygame-boilerplate)
 
 ## Testing
 
@@ -139,7 +139,7 @@ ENV_NAME=template_value
 ## Project Structure
 
 ```
-pygame-boilerplate/
+python-pygame-boilerplate/
 ├── src/
 │   ├── configs/
 │   │   ├── __init__.py
