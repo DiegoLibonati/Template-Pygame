@@ -9,7 +9,7 @@ from src.models.player_model import PlayerModel
 from src.ui.interface_game import InterfaceGame
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def mock_assets() -> Generator[None, None, None]:
     real_surface: pygame.Surface = pygame.Surface((50, 50))
     mock_image: MagicMock = MagicMock()
@@ -27,7 +27,7 @@ def mock_assets() -> Generator[None, None, None]:
         yield
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def interface(mock_assets: None) -> InterfaceGame:
     return InterfaceGame(DefaultConfig())
 

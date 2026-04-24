@@ -15,7 +15,7 @@ class MockKeys:
         return key in self._pressed
 
 
-@pytest.fixture
+@pytest.fixture(scope="function")
 def player() -> Generator[PlayerModel, None, None]:
     real_surface: pygame.Surface = pygame.Surface((50, 50))
     mock_image: MagicMock = MagicMock()
