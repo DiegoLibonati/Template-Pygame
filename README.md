@@ -6,22 +6,6 @@ This project was created primarily for **educational and learning purposes**.
 While it is well-structured and could technically be used in production, it is **not intended for commercialization**.  
 The main goal is to explore and demonstrate best practices, patterns, and technologies in software development.
 
-## Getting Started
-
-1. Clone the repository
-2. Go to the repository folder and execute: `python -m venv venv`
-3. Execute in Windows: `venv\Scripts\activate`
-4. Execute in Linux/Mac: `source venv/bin/activate`
-5. Execute: `pip install -r requirements.txt`
-6. Execute: `pip install -r requirements.dev.txt`
-7. Execute: `pip install -r requirements.test.txt`
-8. Use `python app.py` or `python -m src` to execute the program
-
-### Pre-Commit for Development
-
-1. Once you're inside the virtual environment, let's install the hooks specified in the pre-commit. Execute: `pre-commit install`
-2. Now every time you try to commit, the pre-commit lint will run. If you want to do it manually, you can run the command: `pre-commit run --all-files`
-
 ## Description
 
 **Python Pygame Boilerplate** is a starting point for building games with Pygame.
@@ -50,6 +34,8 @@ How to use it:
 1. Python >= 3.11
 
 ## Libraries used
+
+The dependencies are split across four `requirements` files, one per workflow (runtime, development, testing, build), so each environment installs only what it needs.
 
 #### Requirements.txt
 
@@ -81,94 +67,32 @@ pytest-xdist==3.5.0
 pyinstaller==6.16.0
 ```
 
-## Portfolio link
+## Getting Started
 
-[`https://www.diegolibonati.com.ar/#/project/python-pygame-boilerplate`](https://www.diegolibonati.com.ar/#/project/python-pygame-boilerplate)
+With Python 3.11+ installed, follow these steps to set up the project locally and launch the game.
 
-## Testing
-
-1. Go to the repository folder
-2. Execute: `python -m venv venv`
+1. Clone the repository
+2. Go to the repository folder and execute: `python -m venv venv`
 3. Execute in Windows: `venv\Scripts\activate`
 4. Execute in Linux/Mac: `source venv/bin/activate`
 5. Execute: `pip install -r requirements.txt`
-6. Execute: `pip install -r requirements.test.txt`
-7. Execute: `pytest --log-cli-level=INFO`
+6. Execute: `pip install -r requirements.dev.txt`
+7. Execute: `pip install -r requirements.test.txt`
+8. Copy the example env file so the app can load its configuration:
+   - Windows: `copy .env.example.dev .env`
+   - Linux/Mac: `cp .env.example.dev .env`
+9. Use `python app.py` or `python -m src` to execute the program
 
-## Build
+### Pre-Commit for Development
 
-You can generate a standalone executable (`.exe` on Windows, or binary on Linux/Mac) using **PyInstaller**.
+If you plan to contribute or extend the project, install the pre-commit hooks so linting and formatting run automatically on every commit.
 
-### Windows
-
-1. Go to the repository folder
-2. Activate your virtual environment: `venv\Scripts\activate`
-3. Install build dependencies: `pip install -r requirements.build.txt`
-4. Create the executable: `pyinstaller app.spec`
-
-Alternatively, you can run the helper script: `build.bat`
-
-### Linux / Mac
-
-1. Go to the repository folder
-2. Activate your virtual environment: `source venv/bin/activate`
-3. Install build dependencies: `pip install -r requirements.build.txt`
-4. Create the executable: `pyinstaller app.spec`
-
-Alternatively, you can run the helper script: `./build.sh`
-
-## Production
-
-For a desktop game built with Pygame, "production" means generating a standalone executable that end users can run without Python installed.
-
-### Checklist
-
-1. **Configure the production environment** — copy `.env.example.prod` to `.env` and set `ENVIRONMENT=production`
-
-```bash
-cp .env.example.prod .env
-```
-
-2. **Run the security audit** — check dependencies for known vulnerabilities
-
-```bash
-pip install -r requirements.dev.txt
-pip-audit -r requirements.txt
-```
-
-3. **Run the test suite** — make sure nothing is broken before building
-
-```bash
-pip install -r requirements.test.txt
-pytest
-```
-
-4. **Build the executable** — generates a standalone binary in `dist/`
-
-```bash
-pip install -r requirements.build.txt
-
-# Windows
-build.bat          # or: pyinstaller app.spec
-
-# Linux / Mac
-./build.sh         # or: pyinstaller app.spec
-```
-
-5. **Distribute** — the output inside `dist/` is self-contained. Assets and `.env` are bundled into the executable by `app.spec`, so no extra files are needed.
-
-> There is no server, Docker, or reverse proxy involved — a Pygame game is a desktop application, not a web service.
-
-## Security Audit
-
-You can check your dependencies for known vulnerabilities using **pip-audit**.
-
-1. Go to the repository folder
-2. Activate your virtual environment
-3. Execute: `pip install -r requirements.dev.txt`
-4. Execute: `pip-audit -r requirements.txt`
+1. Once you're inside the virtual environment, let's install the hooks specified in the pre-commit. Execute: `pre-commit install`
+2. Now every time you try to commit, the pre-commit lint will run. If you want to do it manually, you can run the command: `pre-commit run --all-files`
 
 ## Env Keys
+
+The project loads environment variables from a `.env` file at the repository root. Use `.env.example.dev` as a base for development and `.env.example.prod` as a base for production.
 
 1. `ENVIRONMENT`: Defines the application environment. Accepts `development`, `production`, or `testing`.
 2. `ENV_NAME`: A custom environment variable for template demonstration purposes.
@@ -179,6 +103,8 @@ ENV_NAME=template_value
 ```
 
 ## Project Structure
+
+Now that the project is installed and configured, here is how the codebase is organized. The layout follows a layered architecture, with `src/` holding all application code and `tests/` mirroring its structure.
 
 ```
 python-pygame-boilerplate/
@@ -266,6 +192,8 @@ python-pygame-boilerplate/
 16. `app.spec` -> **PyInstaller configuration** for generating standalone executables. Bundles `src/assets/` and `.env` into the binary.
 
 ## Architecture & Design Patterns
+
+The structure above is shaped by a few deliberate design decisions. This section explains the layering and the patterns used inside each layer.
 
 ### Layered Architecture
 
@@ -360,6 +288,95 @@ All file paths are defined once in `src/constants/paths.py` using `resource_path
 GRAPHIC_PLAYER_WALK_1 = resource_path("src/assets/graphics/player_walk_1.png")
 ```
 
+## Testing
+
+With the codebase understood, you can run the test suite at any time to validate changes. Tests live under `tests/` and mirror the `src/` layout.
+
+1. Go to the repository folder
+2. Execute: `python -m venv venv`
+3. Execute in Windows: `venv\Scripts\activate`
+4. Execute in Linux/Mac: `source venv/bin/activate`
+5. Execute: `pip install -r requirements.txt`
+6. Execute: `pip install -r requirements.test.txt`
+7. Execute: `pytest --log-cli-level=INFO`
+
+## Security Audit
+
+Beyond running tests, you should also check the runtime dependencies for known vulnerabilities using **pip-audit** before shipping any release.
+
+1. Go to the repository folder
+2. Activate your virtual environment
+3. Execute: `pip install -r requirements.dev.txt`
+4. Execute: `pip-audit -r requirements.txt`
+
+## Build
+
+Once tests pass and dependencies are clean, you can generate a standalone executable (`.exe` on Windows, or binary on Linux/Mac) using **PyInstaller**.
+
+### Windows
+
+1. Go to the repository folder
+2. Activate your virtual environment: `venv\Scripts\activate`
+3. Install build dependencies: `pip install -r requirements.build.txt`
+4. Create the executable: `pyinstaller app.spec`
+
+Alternatively, you can run the helper script: `build.bat`
+
+### Linux / Mac
+
+1. Go to the repository folder
+2. Activate your virtual environment: `source venv/bin/activate`
+3. Install build dependencies: `pip install -r requirements.build.txt`
+4. Create the executable: `pyinstaller app.spec`
+
+Alternatively, you can run the helper script: `./build.sh`
+
+## Production
+
+For a desktop game built with Pygame, "production" means generating a standalone executable that end users can run without Python installed. The checklist below ties together the previous sections (Testing, Security Audit, Build) into a single release flow.
+
+### Checklist
+
+1. **Configure the production environment** — copy `.env.example.prod` to `.env` and set `ENVIRONMENT=production`
+
+```bash
+cp .env.example.prod .env
+```
+
+2. **Run the [security audit](#security-audit)** — check dependencies for known vulnerabilities
+
+```bash
+pip install -r requirements.dev.txt
+pip-audit -r requirements.txt
+```
+
+3. **Run the [test suite](#testing)** — make sure nothing is broken before building
+
+```bash
+pip install -r requirements.test.txt
+pytest
+```
+
+4. **[Build](#build) the executable** — generates a standalone binary in `dist/`
+
+```bash
+pip install -r requirements.build.txt
+
+# Windows
+build.bat          # or: pyinstaller app.spec
+
+# Linux / Mac
+./build.sh         # or: pyinstaller app.spec
+```
+
+5. **Distribute** — the output inside `dist/` is self-contained. Assets and `.env` are bundled into the executable by `app.spec`, so no extra files are needed.
+
+> There is no server, Docker, or reverse proxy involved — a Pygame game is a desktop application, not a web service.
+
 ## Known Issues
 
 None at the moment.
+
+## Portfolio link
+
+[`https://www.diegolibonati.com.ar/#/project/python-pygame-boilerplate`](https://www.diegolibonati.com.ar/#/project/python-pygame-boilerplate)
