@@ -1,8 +1,8 @@
 import pygame
 
+from src.constants.game import GROUND_Y
 from src.constants.paths import GRAPHIC_PLAYER_JUMP, GRAPHIC_PLAYER_WALK_1, GRAPHIC_PLAYER_WALK_2, SOUND_PLAYER_JUMP
 
-_GROUND_Y = 300
 _SPAWN_X = 80
 _JUMP_VELOCITY = -20
 _GRAVITY = 1
@@ -28,7 +28,7 @@ class PlayerModel(pygame.sprite.Sprite):
         self._jump_sound: pygame.mixer.Sound = pygame.mixer.Sound(SOUND_PLAYER_JUMP)
 
         self.image: pygame.Surface = self._walk_frames[0]
-        self.rect: pygame.Rect = self.image.get_rect(midbottom=(_SPAWN_X, _GROUND_Y))
+        self.rect: pygame.Rect = self.image.get_rect(midbottom=(_SPAWN_X, GROUND_Y))
 
         self._setup()
 
@@ -36,7 +36,7 @@ class PlayerModel(pygame.sprite.Sprite):
 
     @property
     def is_grounded(self) -> bool:
-        return self.rect.bottom >= _GROUND_Y
+        return self.rect.bottom >= GROUND_Y
 
     @property
     def is_jumping(self) -> bool:
@@ -62,8 +62,8 @@ class PlayerModel(pygame.sprite.Sprite):
         self._gravity += _GRAVITY
         self.rect.y += self._gravity
 
-        if self.rect.bottom >= _GROUND_Y:
-            self.rect.bottom = _GROUND_Y
+        if self.rect.bottom >= GROUND_Y:
+            self.rect.bottom = GROUND_Y
             self._gravity = 0
 
     def _animate(self, keys: pygame.key.ScancodeWrapper) -> None:

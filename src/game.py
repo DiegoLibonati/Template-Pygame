@@ -1,22 +1,16 @@
-import sys
-
 import pygame
 
 from src.configs.default_config import DefaultConfig
-from src.constants.paths import FONT_PRIMARY, GRAPHIC_GROUND, GRAPHIC_PLAYER_STAND, GRAPHIC_SKY, SOUND_MUSIC
-from src.models.player_model import PlayerModel
+from src.constants.game import GROUND_Y, SCREEN_H, SCREEN_W
+from src.constants.paths import GRAPHIC_GROUND, GRAPHIC_SKY, SOUND_MUSIC
+from src.features.menu.view import MenuView
+from src.features.player.model import PlayerModel
 
-_SCREEN_W = 800
-_SCREEN_H = 400
-_GROUND_Y = 300
 _FPS = 60
-_FONT_SIZE = 50
 _MUSIC_VOLUME = 0.1
-_COLOR_BG = (94, 129, 162)
-_COLOR_TEXT = (111, 196, 169)
 
 
-class InterfaceGame:
+class Game:
     TITLE = "Python Pygame Boilerplate"
 
     def __init__(self, config: DefaultConfig) -> None:
@@ -24,14 +18,15 @@ class InterfaceGame:
 
         self._config = config
         self._game_started: bool = False
+        self._running: bool = True
 
         pygame.display.set_caption(self.TITLE)
-        self._screen = pygame.display.set_mode((_SCREEN_W, _SCREEN_H))
+        self._screen = pygame.display.set_mode((SCREEN_W, SCREEN_H))
         self._clock = pygame.time.Clock()
         self._player_single_group: pygame.sprite.GroupSingle = pygame.sprite.GroupSingle()
 
         self._load_assets()
-        self._build_surfaces()
+        self._menu = MenuView(self._screen)
         self._setup()
 
     # --- Properties ---
@@ -65,15 +60,8 @@ class InterfaceGame:
 
     def _load_assets(self) -> None:
         self._bg_music = pygame.mixer.Sound(SOUND_MUSIC)
-        self._primary_font = pygame.font.Font(FONT_PRIMARY, _FONT_SIZE)
         self._sky_surface = pygame.image.load(GRAPHIC_SKY).convert()
         self._ground_surface = pygame.image.load(GRAPHIC_GROUND).convert()
-        self._player_stand_surface = pygame.transform.scale2x(pygame.image.load(GRAPHIC_PLAYER_STAND).convert_alpha())
-
-    def _build_surfaces(self) -> None:
-        self._player_stand_rect = self._player_stand_surface.get_rect(center=(_SCREEN_W // 2, _SCREEN_H // 2))
-        self._press_space_surface = self._primary_font.render("Press Space to Start", False, _COLOR_TEXT)
-        self._press_space_rect = self._press_space_surface.get_rect(center=(_SCREEN_W // 2, 340))
 
     def _setup(self) -> None:
         self._bg_music.set_volume(_MUSIC_VOLUME)
@@ -84,32 +72,31 @@ class InterfaceGame:
     def _handle_events(self) -> None:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
+                self._running = False
 
             if not self._game_started and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 self._game_started = True
                 self._bg_music.play(loops=-1)
 
-    def _render_intro(self) -> None:
-        self._screen.fill(_COLOR_BG)
-        self._screen.blit(self._player_stand_surface, self._player_stand_rect)
-        self._screen.blit(self._press_space_surface, self._press_space_rect)
-
     def _render_game(self) -> None:
         self._screen.blit(self._sky_surface, (0, 0))
-        self._screen.blit(self._ground_surface, (0, _GROUND_Y))
+        self._screen.blit(self._ground_surface, (0, GROUND_Y))
         self._player_single_group.draw(surface=self._screen)
         self._player_single_group.update()
 
+        if self._config.DEBUG:
+            pygame.display.set_caption(f"{self.TITLE} - {int(self._clock.get_fps())} fps")
+
     def game_loop(self) -> None:
-        while True:
+        while self._running:
             self._handle_events()
 
             if self._game_started:
                 self._render_game()
             else:
-                self._render_intro()
+                self._menu.render()
 
             pygame.display.update()
             self._clock.tick(_FPS)
+
+        pygame.quit()

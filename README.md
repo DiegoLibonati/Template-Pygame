@@ -25,7 +25,7 @@ What it includes:
 How to use it:
 
 1. Clone the repository
-2. Replace the game logic inside `src/models/`, `src/ui/`, and `src/assets/` with your own
+2. Replace the game logic inside `src/features/`, `src/game.py`, and `src/assets/` with your own
 3. Update `ENV_NAME` and the project name in `pyproject.toml`
 4. Keep the config, logging, utils, and build setup as-is or extend them as needed
 
@@ -35,33 +35,34 @@ How to use it:
 
 ## Libraries used
 
-The dependencies are split across four `requirements` files, one per workflow (runtime, development, testing, build), so each environment installs only what it needs.
+The dependencies are declared in `pyproject.toml` and split across four groups, one per workflow (runtime, development, testing, build), so each environment installs only what it needs. The `requirements*.txt` files are thin wrappers that delegate to those groups via `-e .[group]`.
 
-#### Requirements.txt
+#### Runtime (`[project.dependencies]`)
 
 ```
 pygame==2.6.1
-python-dotenv==1.0.1
+python-dotenv==1.2.2
 ```
 
-#### Requirements.dev.txt
+#### Dev (`[project.optional-dependencies]` dev)
+
 ```
 pre-commit==4.3.0
 pip-audit==2.7.3
 ruff==0.11.12
 ```
 
-#### Requirements.test.txt
+#### Test (`[project.optional-dependencies]` test)
 
 ```
-pytest==8.4.2
+pytest==9.0.3
 pytest-env==1.1.5
 pytest-cov==4.1.0
 pytest-timeout==2.3.1
 pytest-xdist==3.5.0
 ```
 
-#### Requirements.build.txt
+#### Build (`[project.optional-dependencies]` build)
 
 ```
 pyinstaller==6.16.0
@@ -104,11 +105,18 @@ ENV_NAME=template_value
 
 ## Project Structure
 
-Now that the project is installed and configured, here is how the codebase is organized. The layout follows a layered architecture, with `src/` holding all application code and `tests/` mirroring its structure.
+Now that the project is installed and configured, here is how the codebase is organized. The layout follows a **feature-based architecture**, with `src/` holding all application code and `tests/` mirroring its structure.
 
 ```
 python-pygame-boilerplate/
 ├── src/
+│   ├── features/
+│   │   ├── player/
+│   │   │   ├── __init__.py
+│   │   │   └── model.py
+│   │   └── menu/
+│   │       ├── __init__.py
+│   │       └── view.py
 │   ├── configs/
 │   │   ├── __init__.py
 │   │   ├── default_config.py
@@ -118,13 +126,8 @@ python-pygame-boilerplate/
 │   │   └── logger_config.py
 │   ├── constants/
 │   │   ├── __init__.py
+│   │   ├── game.py
 │   │   └── paths.py
-│   ├── models/
-│   │   ├── __init__.py
-│   │   └── player_model.py
-│   ├── ui/
-│   │   ├── __init__.py
-│   │   └── interface_game.py
 │   ├── utils/
 │   │   ├── __init__.py
 │   │   └── helpers.py
@@ -133,8 +136,16 @@ python-pygame-boilerplate/
 │   │   ├── graphics/
 │   │   └── sounds/
 │   ├── __init__.py
-│   └── __main__.py
+│   ├── __main__.py
+│   └── game.py
 ├── tests/
+│   ├── test_features/
+│   │   ├── test_player/
+│   │   │   ├── __init__.py
+│   │   │   └── test_model.py
+│   │   └── test_menu/
+│   │       ├── __init__.py
+│   │       └── test_view.py
 │   ├── test_configs/
 │   │   ├── __init__.py
 │   │   ├── test_default_config.py
@@ -145,17 +156,12 @@ python-pygame-boilerplate/
 │   ├── test_constants/
 │   │   ├── __init__.py
 │   │   └── test_paths.py
-│   ├── test_models/
-│   │   ├── __init__.py
-│   │   └── test_player_model.py
-│   ├── test_ui/
-│   │   ├── __init__.py
-│   │   └── test_interface_game.py
 │   ├── test_utils/
 │   │   ├── __init__.py
 │   │   └── test_helpers.py
 │   ├── __init__.py
-│   └── conftest.py
+│   ├── conftest.py
+│   └── test_game.py
 ├── app.py
 ├── pyproject.toml
 ├── requirements.txt
@@ -174,39 +180,40 @@ python-pygame-boilerplate/
 └── README.md
 ```
 
-1. `src` -> Root directory of the source code. Contains the full application logic following a **layered architecture** pattern.
-2. `configs` -> Contains all **configuration classes** organized by environment (development, production, testing). Includes logging setup and application settings.
-3. `constants` -> Holds **static values** like asset paths, centralized in `paths.py` for use across the entire application.
-4. `models` -> Defines **Pygame sprite subclasses** that represent game entities. Each model manages its own input, physics, animation, and boundaries.
-5. `ui` -> Contains the **game interface logic**. `interface_game.py` acts as the main orchestrator: handles the game loop, event processing, and rendering states (intro / in-game).
-6. `utils` -> Contains **shared utilities**. `helpers.py` provides `resource_path()` to resolve asset paths both in development and inside a PyInstaller bundle.
-7. `assets` -> Static game files: **graphics** (sprites, backgrounds), **sounds** (music, effects), and **fonts**.
+1. `src` -> Root directory of the source code. Contains the full application logic following a **feature-based architecture** pattern.
+2. `features` -> Each subfolder is a self-contained feature. `player/` holds the sprite model; `menu/` holds the intro screen view. Add new features here (e.g. `enemy/`, `hud/`).
+3. `configs` -> Contains all **configuration classes** organized by environment (development, production, testing). Includes logging setup and application settings.
+4. `constants` -> Holds **static values**: world geometry (`game.py`) and asset paths (`paths.py`), centralized for use across the entire application.
+5. `utils` -> Contains **shared utilities**. `helpers.py` provides `resource_path()` to resolve asset paths both in development and inside a PyInstaller bundle.
+6. `assets` -> Static game files: **graphics** (sprites, backgrounds), **sounds** (music, effects), and **fonts**.
+7. `game.py` -> The **main game orchestrator**. Handles the game loop, event processing, and delegates rendering to the appropriate feature (menu or gameplay).
 8. `tests/` -> Contains **tests** organized to mirror the `src/` structure.
 9. `conftest.py` -> Defines **pytest fixtures** for application setup and tests data.
 10. `app.py` -> The **application entry point**. Loads the environment, selects the config class, and launches the game.
 11. `pyproject.toml` -> **Unified project configuration** for pytest, ruff, and project metadata.
-12. `requirements.txt` -> Lists **production dependencies**.
-13. `requirements.dev.txt` -> Lists **development dependencies** (pre-commit, pip-audit).
-14. `requirements.test.txt` -> Lists **testing dependencies** (pytest and plugins).
-15. `requirements.build.txt` -> Lists **build dependencies** (PyInstaller).
-16. `app.spec` -> **PyInstaller configuration** for generating standalone executables. Bundles `src/assets/` and `.env` into the binary.
+12. `requirements.txt` -> Thin wrapper — installs the package with its **runtime dependencies** via `-e .`.
+13. `requirements.dev.txt` -> Thin wrapper — installs the **dev extras** via `-e .[dev]`.
+14. `requirements.test.txt` -> Thin wrapper — installs the **test extras** via `-e .[test]`.
+15. `requirements.build.txt` -> Thin wrapper — installs the **build extras** via `-e .[build]`.
+16. `app.spec` -> **PyInstaller configuration** for generating standalone executables. Bundles `src/assets/` and `.env.example.prod` into the binary.
 
 ## Architecture & Design Patterns
 
 The structure above is shaped by a few deliberate design decisions. This section explains the layering and the patterns used inside each layer.
 
-### Layered Architecture
+### Feature-based Architecture
 
-The project follows a **layered architecture** that separates responsibilities into distinct layers. Each layer only communicates with the one directly below it, which makes the codebase easier to maintain, test, and extend.
+The project follows a **feature-based architecture** where each game concept lives in its own folder under `src/features/`. Shared infrastructure (configs, constants, utils) stays at the `src/` level. The main orchestrator (`src/game.py`) wires features together and owns the game loop.
 
 ```
 ┌─────────────────────────────┐
 │         Entry Point         │  app.py
 ├─────────────────────────────┤
-│        UI / Interface       │  src/ui/
-├─────────────────────────────┤
-│           Models            │  src/models/
-├─────────────────────────────┤
+│       Game Orchestrator     │  src/game.py
+├──────────────┬──────────────┤
+│   feature/   │   feature/   │  src/features/player/  src/features/menu/
+│    player    │     menu     │  (add more features here)
+├──────────────┴──────────────┤
 │     Configs / Constants     │  src/configs/  src/constants/
 ├─────────────────────────────┤
 │           Utils             │  src/utils/
@@ -235,16 +242,16 @@ This makes it trivial to add a new environment by defining a new class and regis
 ---
 
 #### 2. Game Loop Pattern
-`InterfaceGame` implements the standard **game loop**: process input → update state → render → repeat at a fixed frame rate. The loop is split into focused private methods to keep each responsibility isolated.
+`Game` implements the standard **game loop**: process input → update state → render → repeat at a fixed frame rate. The loop is split into focused private methods to keep each responsibility isolated. Rendering is delegated to the appropriate feature.
 
 ```python
 def game_loop(self) -> None:
-    while True:
+    while self._running:
         self._handle_events()   # input
         if self._game_started:
-            self._render_game() # update + render
+            self._render_game() # update + render (player feature)
         else:
-            self._render_intro()
+            self._menu.render() # render (menu feature)
         pygame.display.update()
         self._clock.tick(_FPS)
 ```
@@ -276,7 +283,7 @@ def update(self) -> None:
 ---
 
 #### 5. State Machine (Intro / In-Game)
-`InterfaceGame` uses a simple boolean state (`_game_started`) to switch between the two game states. Each state has its own dedicated render method, making it straightforward to add new states (e.g., pause, game over) in the future.
+`Game` uses a simple boolean state (`_game_started`) to switch between the two game states. Each state delegates rendering to its feature (`MenuView` or the player group), making it straightforward to add new states (e.g., pause, game over) in the future.
 
 ---
 
@@ -370,6 +377,8 @@ build.bat          # or: pyinstaller app.spec
 ```
 
 5. **Distribute** — the output inside `dist/` is self-contained. Assets and `.env` are bundled into the executable by `app.spec`, so no extra files are needed.
+
+> Runtime configuration should come from OS environment variables, not from a baked-in `.env`; the bundled `.env` (sourced from `.env.example.prod`) only ships safe defaults.
 
 > There is no server, Docker, or reverse proxy involved — a Pygame game is a desktop application, not a web service.
 

@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 import pygame
 import pytest
 
-from src.models.player_model import PlayerModel
+from src.features.player.model import PlayerModel
 
 
 class MockKeys:

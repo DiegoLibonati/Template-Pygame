@@ -9,3 +9,14 @@ build
 dist
 .ruff_cache
 *.egg-info/
+.venv/
+env/
+.coverage
+*.coverage
+htmlcov/
+.mypy_cache/
+.tox/
+Thumbs.db
+.DS_Store
+.idea/
+.vscode/
