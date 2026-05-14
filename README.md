@@ -176,6 +176,7 @@ python-pygame-boilerplate/
 ├── .env.example.prod
 ├── .gitignore
 ├── .pre-commit-config.yaml
+├── .python-version
 ├── LICENSE
 └── README.md
 ```
@@ -196,6 +197,7 @@ python-pygame-boilerplate/
 14. `requirements.test.txt` -> Thin wrapper — installs the **test extras** via `-e .[test]`.
 15. `requirements.build.txt` -> Thin wrapper — installs the **build extras** via `-e .[build]`.
 16. `app.spec` -> **PyInstaller configuration** for generating standalone executables. Bundles `src/assets/` and `.env.example.prod` into the binary.
+17. `.python-version` -> Declares the **minimum Python version** (`3.11`) for pyenv and compatible tooling (e.g. `uv`) to auto-select the correct interpreter.
 
 ## Architecture & Design Patterns
 
