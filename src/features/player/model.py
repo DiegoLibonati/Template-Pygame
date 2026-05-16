@@ -60,7 +60,7 @@ class PlayerModel(pygame.sprite.Sprite):
 
     def _apply_gravity(self) -> None:
         self._gravity += _GRAVITY
-        self.rect.y += self._gravity
+        self.rect.y += int(self._gravity)
 
         if self.rect.bottom >= GROUND_Y:
             self.rect.bottom = GROUND_Y
